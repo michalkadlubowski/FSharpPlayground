@@ -62,9 +62,10 @@ open System
             let row, col = fst emptyFieldCoordinates.Value, snd emptyFieldCoordinates.Value
             [1..9] 
             |> Seq.map (fun value -> 
-                let newBoard = Array2D.copy board
-                newBoard.SetValue(mapToSudokuField value, row, col)           
-                match isCellValid newBoard row col with
-                | true  -> tryGetSolvedBoard newBoard
-                | false -> None)
+                board.SetValue(mapToSudokuField value, row, col)           
+                match (isCellValid board row col && tryGetSolvedBoard board |> Option.isSome) with
+                | true  -> Some board
+                | false -> 
+                    board.SetValue(None, row, col)
+                    None)
             |> Seq.tryPick id        
