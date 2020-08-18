@@ -44,6 +44,7 @@ let main _ =
 
    let result = Sudoku.tryGetSolvedBoard fieldBoard
    if result.IsSome then
+      printBoard fieldBoard
       printBoard result.Value
    else
      printf "No solution"

@@ -49,10 +49,10 @@ open System
         match a with
             | x when x > 0 && x < 10 -> Some a
             | 0 -> None
-            | _ -> raise (ArgumentOutOfRangeException "Filed value out of range")    
-        
+            | _ -> raise (ArgumentOutOfRangeException "Filed value out of range")
+
     // Solve sudoku using backtracking
-    let rec tryGetSolvedBoard (board: SudokuBoard) : SudokuBoard option =
+    let rec trySolveBoard (board: SudokuBoard) : SudokuBoard option =
         //exit condition - all fields set
         let emptyFieldCoordinates = find2D None board
         if (emptyFieldCoordinates.IsNone) then
@@ -63,9 +63,13 @@ open System
             [1..9] 
             |> Seq.map (fun value -> 
                 board.SetValue(mapToSudokuField value, row, col)           
-                match (isCellValid board row col && tryGetSolvedBoard board |> Option.isSome) with
+                match (isCellValid board row col && trySolveBoard board |> Option.isSome) with
                 | true  -> Some board
                 | false -> 
                     board.SetValue(None, row, col)
                     None)
             |> Seq.tryPick id        
+
+    let rec tryGetSolvedBoard (board: SudokuBoard) : SudokuBoard option =
+        let copied = Array2D.copy(board);
+        trySolveBoard copied            
